@@ -1,0 +1,42 @@
+body {
+    padding:0;
+    margin:0;
+    background:#fff;
+    font-size:16px;
+    color:#333;
+}
+body * {
+    box-sizing: border-box;
+    line-height: 1;
+}
+.wrapper {
+    border:2px solid #007bff;
+    position:relative;
+    min-width:22rem;
+    padding:1rem;
+}
+.btn .spinner-border {
+	position:absolute;
+	right:1rem;
+    top: calc(50% - 8px);
+	display:none;
+}
+.btn.disabled .spinner-border,.btn:disabled .spinner-border {
+	display:inline-block;
+}
+.popup-logo {
+    height:3rem;
+    width:auto;
+    display:inline-block;
+}
+
+.fs-0 { font-size:.7rem; }
+.fs-1 { font-size:1rem; }
+.fs-2 { font-size:1.3rem; }
+.fs-3 { font-size:1.65rem; }
+.fs-4 { font-size:2rem; }
+.fs-5 { font-size:2.4rem; }
+.fs-6 { font-size:3rem; }
+.fs-7 { font-size:3.4rem; }
+.fs-8 { font-size:4rem; }
+.fs-9 { font-size:5rem; }

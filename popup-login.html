@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+<head>
+    <meta charset="utf-8" />
+    <title>Supasell Giriş</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/popup-login.css">
+</head>
+<body class="supasell">
+    <div class="wrapper container-fluid">
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="https://www.supasell.com/" target="_blank">
+                    <img src="https://cms.supasell.com/wp-content/uploads/2023/01/logo-1.svg" class="popup-logo mb-2">
+                </a>
+            </div>
+        </div>
+        <form class="row d-none m-0" id="popup-login">
+            <div class="col-12">
+                <div class="mb-2">
+                    <label>E-Posta Adresiniz</label>
+                    <input type="email" class="form-control" name="supasell-username" placeholder="E-Posta Adresiniz" required>
+                </div>
+                <div class="mb-2">
+                    <label>Şifreniz</label>
+                    <input type="password" class="form-control" name="supasell-password" placeholder="Şifreniz" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 position-relative">
+                    <span>Giriş Yap</span>
+                    <div class="spinner-border spinner-border-sm text-light">
+                        <span class="sr-only"></span>
+                    </div>
+                </button>
+                <input type="hidden" name="action" value="login">
+            </div>
+            <div class="col-12 py-2 d-none" id="supasell-login-alert"></div>
+            <div class="col-12 pt-2 d-flex justify-content-around">
+                <a href="#" id="supasell-register" class="text-muted font-weight-light text-decoration-none">Yeni Üyelik</a>
+                <a href="#" id="supasell-lostpassword" class="text-muted font-weight-light text-decoration-none">Şifremi Unuttum</a>
+            </div>
+        </form>
+        <div class="row d-none" id="popup-logged-in">
+            <div class="col-12 text-center pb-2 py-1 fs-2">
+                Supasell Asistan eklentisine giriş yapmış gözüküyorsunuz.<br />
+                Amazon pazaryeri sitelerinde ve Amazon Sellercentral'da kullanılabilir durumdadır.<br />
+                Site içerisinde, sağ bölümde eklentiyi veya ikonunu görebilirsiniz.
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-sm btn-danger w-100">
+                    <span>Çıkış Yap</span>
+                    <div class="spinner-border spinner-border-sm text-light">
+                        <span class="sr-only"></span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="/js/supasell.config.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/supasell.config.js"></script>
+    <script src="/js/popup-login.js"></script>
+</body>
+</html>
