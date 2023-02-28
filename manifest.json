@@ -1,7 +1,7 @@
 {
 	"name": "Supasell Asistan",
-	"version": "2.15",
-	"version_name": "2.15 Beta",
+	"version": "2.16",
+	"version_name": "2.16 Beta",
 	"minimum_chrome_version": "110",
 	"manifest_version": 3,
 	"description": "Supasell ekibi tarafından yapılan bu eklenti Dropshipping profesyonellerine yardımcı olmak için hazırlanmıştır.",
