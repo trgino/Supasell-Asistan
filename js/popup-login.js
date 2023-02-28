@@ -341,6 +341,7 @@ $(document).ready(function(){
     supasell_popup_LoginCheck(function(){
 		$('#popup-login').addClass('d-none');
 		$('#popup-logged-in').removeClass('d-none');
+		$('#supasell-icon').append($('<img>',{'src':supasell_config.icons[16]}));
 	}, function(){
 		$('#popup-login').removeClass('d-none');
 		$('#popup-logged-in').addClass('d-none');
