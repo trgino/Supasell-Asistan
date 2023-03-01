@@ -775,3 +775,33 @@ button:disabled .supasell-svg-logo-light {
 	height:100%;
 	background:#45bf55;
 }
+
+#supasell-order-list-used::-webkit-scrollbar-track,
+#supasell-order-list-unused::-webkit-scrollbar-track,
+#supasell-control-list-all::-webkit-scrollbar-thumb,
+#supasell-control-list-shipped::-webkit-scrollbar-thumb,
+#supasell-control-list-final::-webkit-scrollbar-thumb
+{
+	box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+	background-color: var(--light);
+}
+
+#supasell-order-list-used::-webkit-scrollbar,
+#supasell-order-list-unused::-webkit-scrollbar,
+#supasell-control-list-all::-webkit-scrollbar-thumb,
+#supasell-control-list-shipped::-webkit-scrollbar-thumb,
+#supasell-control-list-final::-webkit-scrollbar-thumb
+{
+	width: 6px;
+	background-color: var(--light);
+}
+
+#supasell-order-list-used::-webkit-scrollbar-thumb,
+#supasell-order-list-unused::-webkit-scrollbar-thumb,
+#supasell-control-list-all::-webkit-scrollbar-thumb,
+#supasell-control-list-shipped::-webkit-scrollbar-thumb,
+#supasell-control-list-final::-webkit-scrollbar-thumb
+{
+	background-color: var(--dark);
+	border-radius:3px;
+}
