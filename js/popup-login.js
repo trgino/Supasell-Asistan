@@ -44,73 +44,23 @@ function supasell_build_query(_query, _rand){
 }
 
 function supasell_pre_request(_data, _success){
-	if(_runcaptcha){
-		chrome.windows.remove(_lostpw, function(){
-			chrome.windows.create({
-				url: supasell_config.captcha+'?'+supasell_build_query({'deviceID':_deviceID,'extensionid':supasell_config.extensionid},true), 
-				type: 'panel', 
-				width:500, 
-				height:90,
-				top:100,
-				left:window.window_width/2,
-				setSelfAsOpener:true,
-			}, function(window){
-				supasell_log('window',window);
-				_runcaptcha = window.id;
-				_p_load_msg['runcaptcha'] = {
-					'window' : _runcaptcha,
-					'data' : {
-                        'type':'runcaptcha',
-                        'name':'runcaptcha',
-                        'value':_deviceID,
-                    },
-					'url' : supasell_config.captcha
-				};
-			});
-		});
-	}else{
-		chrome.windows.create({
-			url: supasell_config.captcha+'?'+supasell_build_query({'deviceID':_deviceID,'extensionid':supasell_config.extensionid},true), 
-			type: 'panel', 
-			width:500, 
-			height:90,
-			top:100,
-			left:window.window_width/2,
-			setSelfAsOpener:true,
-		}, function(window){
-			supasell_log('window',window);
-			_runcaptcha = window.id;
-			_p_load_msg['runcaptcha'] = {
-				'window' : _runcaptcha,
-				'data' : {
-					'type':'runcaptcha',
-					'name':'runcaptcha',
-					'value':_deviceID,
-				},
-				'url' : supasell_config.captcha
-			};
-		});
-	}
-
-	$(window).one('captcha_callback',function(e, cb){
-		_runcaptcha = false;
-		let _new_data = {
-			'_deviceID' : window._deviceID,
-			'version' : supasell_config.version,
-			'g-recaptcha-response':cb,
-		};
-		$.when($.each(_data,function(i, v){
-			_new_data[v.name] = v.value;
-		})).promise().then(function(){
-			_success(_new_data);
-		});
+	let _new_data = {
+		'_deviceID' : window._deviceID,
+		'version' : supasell_config.version,
+	};
+	$.when($.each(_data,function(i, v){
+		_new_data[v.name] = v.value;
+	})).promise().then(function(){
+		_success(_new_data);
 	});
 
 	return false;
 }
 
 function supasell_popup_message(_msg){
-	platform.storage.local.set({'background-message':{'run':_msg,'cache':$.now()}})
+	platform.storage.local.set({'background-message':{'run':_msg,'cache':$.now()}}, function(data){
+		$('#debug').append( $('<div>').append( 'supasell_popup_message:'+_msg ) );
+	});
     return false;
 }
 
@@ -142,7 +92,7 @@ function supasell_popup_Save_OrderList(_data, _cb){
 }
 
 function supasell_popup_Save_Settings(_data, _cb){
-	chrome.storage.local.set({'supasell_settings':_data},function(){
+	platform.storage.local.set({'supasell_settings':_data},function(){
 		if(typeof _cb == 'function'){
 			_cb();
 		}
@@ -151,37 +101,37 @@ function supasell_popup_Save_Settings(_data, _cb){
 }
 
 function supasell_popup_DeviceID(_cb){
-	chrome.storage.local.get('window_width',function(data){
+	platform.storage.local.get('window_width',function(data){
 		if(data.hasOwnProperty('window_width')){
 			window.window_width = data.window_width
 		}else{
 			window.window_width = 1000;
 		}
-	});
-	chrome.storage.local.get('_deviceID',function(data){
-        supasell_log('device id var');
-		if(data.hasOwnProperty('_deviceID')){
-            supasell_log('device id var',data._deviceID);
-			window._deviceID = data._deviceID;
-			if(typeof _cb == 'function'){
-				_cb();
-			}
-		}else{
-			let _temp_id = uuidv4();
-            supasell_log('device id yok',_temp_id);
-			chrome.storage.local.set({'_deviceID':_temp_id},function(){
-				window._deviceID = _temp_id;
+		platform.storage.local.get('_deviceID',function(data){
+			supasell_log('device id var');
+			if(data.hasOwnProperty('_deviceID')){
+				supasell_log('device id var',data._deviceID);
+				window._deviceID = data._deviceID;
 				if(typeof _cb == 'function'){
 					_cb();
 				}
-			});
-		}
+			}else{
+				let _temp_id = uuidv4();
+				supasell_log('device id yok',_temp_id);
+				platform.storage.local.set({'_deviceID':_temp_id},function(){
+					window._deviceID = _temp_id;
+					if(typeof _cb == 'function'){
+						_cb();
+					}
+				});
+			}
+		});
 	});
 	return false;
 }
 
 function supasell_popup_Save_Login(key, _cb_success){
-	chrome.storage.local.set({'supasell_login':key},function(){
+	platform.storage.local.set({'supasell_login':key},function(){
 		if(typeof _cb_success == 'function'){
 			_cb_success(key);
 		}
@@ -190,7 +140,7 @@ function supasell_popup_Save_Login(key, _cb_success){
 }
 
 function supasell_popup_LoginCheck(_cb_success, _cb_fail){
-	chrome.storage.local.get('supasell_login',function(data){
+	platform.storage.local.get('supasell_login', function(data){
 		supasell_log('supasell_popup_LoginCheck',data);
 		if(data.hasOwnProperty('supasell_login')){
 			supasell_log('supasell_check_local_login',data);
@@ -272,7 +222,7 @@ function supasell_popup_LogOUT_Remote(_x, _cb){
 function supasell_popup_New_DeviceID(){
 	let _new_data = {};
 	_new_data['_deviceID'] = uuidv4();
-	chrome.storage.local.set(_new_data,function(){
+	platform.storage.local.set(_new_data,function(){
 		window['_deviceID'] = _new_data['_deviceID'];
 		supasell_popup_DeviceID(function(){
 			supasell_popup_LogOUT(false);
@@ -292,19 +242,23 @@ function supasell_popup_Remote_Login(){
 		$('#popup-login input').prop('readonly', true);
 		$('#popup-login button').prop('disabled', true);
 		supasell_pre_request(_data,function(_data){
+			$('#debug').append($('<div>').append('supasell_pre_request:'+JSON.stringify(_data)));
 			$.post(supasell_config.api, _data, function(data){
+				$('#debug').append($('<div>').append('login_request_response:'+JSON.stringify(data)));
 				if(data.status){
 					if(data.action=='logout'){
 						supasell_popup_New_DeviceID();
 						supasell_login_alert(data.msg);
 					}else{
-						supasell_popup_Save_Login(data.token,function(){
+						supasell_popup_Save_Login(data.token, function(){
 							$('#popup-login input').prop('readonly', false);
 							$('#popup-login button').prop('disabled', false);
+							$('#debug').append($('<div>').append('supasell_popup_Save_Login:'+data.token));
 							supasell_popup_LoginCheck(function(){
 								$('#popup-login').addClass('d-none');
 								$('#popup-logged-in').removeClass('d-none');
 								supasell_popup_Save_Settings(data.settings);
+								$('#debug').append( $('<div>').append( 'supasell_popup_LoginCheck: settings: '+JSON.stringify(data.settings) ) );
 								if(Object.keys(data.orders).length){
 									supasell_popup_Save_OrderList(data.orders);
 								}
@@ -312,6 +266,8 @@ function supasell_popup_Remote_Login(){
 								setTimeout(function(){
 									window.close();
 								},3e3);
+							}, function(){
+								$('#debug').append( $('<div>').append( 'supasell_popup_LoginCheck: FAIL' ) );
 							});
 						});
 					}
@@ -336,15 +292,15 @@ function supasell_popup_Remote_Login(){
 
 
 $(document).ready(function(){
-	supasell_popup_DeviceID();
-
-    supasell_popup_LoginCheck(function(){
-		$('#popup-login').addClass('d-none');
-		$('#popup-logged-in').removeClass('d-none');
-		$('#supasell-icon').append($('<img>',{'src':supasell_config.icons[16]}));
-	}, function(){
-		$('#popup-login').removeClass('d-none');
-		$('#popup-logged-in').addClass('d-none');
+	supasell_popup_DeviceID(function(){
+		supasell_popup_LoginCheck(function(){
+			$('#popup-login').addClass('d-none');
+			$('#popup-logged-in').removeClass('d-none');
+			$('#supasell-icon').append($('<img>',{'src':supasell_config.icons[16]}));
+		}, function(){
+			$('#popup-login').removeClass('d-none');
+			$('#popup-logged-in').addClass('d-none');
+		});
 	});
 
     $(document).on('click','#popup-logged-in button',function(e){
@@ -365,8 +321,8 @@ $(document).ready(function(){
 	$(document).on('click','#supasell-lostpassword',function(e){
 		e.preventDefault();
 		if(_lostpw){
-			chrome.windows.remove(_lostpw, function(){
-				chrome.windows.create({
+			platform.windows.remove(_lostpw, function(){
+				platform.windows.create({
 					url: supasell_config.lostpassword+'?'+supasell_build_query({'deviceID':_deviceID,'extensionid':supasell_config.extensionid},true), 
 					type: 'panel', 
 					width:500, 
@@ -412,7 +368,7 @@ $(document).ready(function(){
 				
 			});
 		}else{
-			chrome.windows.create({
+			platform.windows.create({
 				url: supasell_config.lostpassword+'?'+supasell_build_query({'deviceID':_deviceID,'extensionid':supasell_config.extensionid},true), 
 				type: 'panel', 
 				width:500, 
@@ -460,8 +416,8 @@ $(document).ready(function(){
 	$(document).on('click','#supasell-register',function(e){
 		e.preventDefault();
 		if(_register){
-			chrome.windows.remove(_register, function(){
-				chrome.windows.create({
+			platform.windows.remove(_register, function(){
+				platform.windows.create({
 					url: supasell_config.register+'?'+supasell_build_query({'deviceID':_deviceID,'extensionid':supasell_config.extensionid},true), 
 					type: 'panel', 
 					width:500, 
@@ -507,7 +463,7 @@ $(document).ready(function(){
 				
 			});
 		}else{
-			chrome.windows.create({
+			platform.windows.create({
 				url: supasell_config.register+'?'+supasell_build_query({'deviceID':_deviceID,'extensionid':supasell_config.extensionid},true), 
 				type: 'panel', 
 				width:500, 
@@ -562,52 +518,53 @@ $(document).ready(function(){
 		}
 	});
 
-	chrome.windows.getAll({populate:true,windowTypes:['popup']},function(_window){
+	platform.windows.getAll({populate:true,windowTypes:['popup']},function(_window){
 		supasell_log('getall',_window);
 		if(_window.length){
 			_window.forEach(function(i,v){
 				i.tabs.forEach(function(ii,vv){
 					if(ii.url.indexOf('cms.supasell.com')>=0){
-						chrome.windows.remove(ii.windowId);
+						platform.windows.remove(ii.windowId);
 					}
 				});
 			});
 		}
 	});
-});
 
-chrome.storage.local.onChanged.addListener(function(changes, area){
-    if(changes.hasOwnProperty('content-message')){
-        if(changes['content-message'].hasOwnProperty('newValue')){
-           supasell_log('chrome.storage.local.onChanged changes:',changes['content-message'].newValue);
-            if(changes['content-message'].newValue.hasOwnProperty('run')){
-                _run = changes['content-message'].newValue.run;
-                if(_run=='loginCheck'){
-                    supasell_popup_LoginCheck(function(){
-						$('#popup-login').addClass('d-none');
-						$('#popup-logged-in').removeClass('d-none');
-					}, function(){
-						$('#popup-login').removeClass('d-none');
-						$('#popup-logged-in').addClass('d-none');
-					});
-                }
-            }
-        }
-    }
-});
+	platform.storage.local.onChanged.addListener(function(changes, area){
+		if(changes.hasOwnProperty('content-message')){
+			if(changes['content-message'].hasOwnProperty('newValue')){
+			   supasell_log('platform.storage.local.onChanged changes:',changes['content-message'].newValue);
+				if(changes['content-message'].newValue.hasOwnProperty('run')){
+					_run = changes['content-message'].newValue.run;
+					if(_run=='loginCheck'){
+						supasell_popup_LoginCheck(function(){
+							$('#popup-login').addClass('d-none');
+							$('#popup-logged-in').removeClass('d-none');
+						}, function(){
+							$('#popup-login').removeClass('d-none');
+							$('#popup-logged-in').addClass('d-none');
+						});
+					}
+				}
+			}
+		}
+	});
+	
+	window.addEventListener('message',function(event) {
+		let _json = event.data;
+		if(_json && _json.hasOwnProperty('type')){
+			eventz_source = event.source;
+			eventz_origin = event.origin;
+			supasell_log('addEventListener message _json',_json);
+			if(_json.type=='loadback'){
+				$(window).trigger('postmsg_load', [_json.name]);
+			}else if(_json.type=='captcha_callback'){
+				$(window).trigger('captcha_callback', [_json.value]);
+			}
+		}else{
+			supasell_log('addEventListener message no_json',event.data);
+		}
+	},false);
 
-window.addEventListener('message',function(event) {
-    let _json = event.data;
-    if(_json && _json.hasOwnProperty('type')){
-		eventz_source = event.source;
-        eventz_origin = event.origin;
-        supasell_log('addEventListener message _json',_json);
-        if(_json.type=='loadback'){
-            $(window).trigger('postmsg_load', [_json.name]);
-        }else if(_json.type=='captcha_callback'){
-            $(window).trigger('captcha_callback', [_json.value]);
-        }
-    }else{
-        supasell_log('addEventListener message no_json',event.data);
-    }
-},false);
+});

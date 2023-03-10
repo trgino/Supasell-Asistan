@@ -1,7 +1,8 @@
+var platform = chrome;
 var supasell_config = {
 	'debug' : false,
-	'name' : chrome.runtime.getManifest().name,
-	'homepage' : chrome.runtime.getManifest().homepage_url,
+	'name' : platform.runtime.getManifest().name,
+	'homepage' : platform.runtime.getManifest().homepage_url,
 	'privacypolicy': 'https://www.supasell.com/privacy-policy',
 	'tos' : 'https://www.supasell.com/terms-of-service',
 	'lostpassword' : 'https://cms.supasell.com/lostpassword/',
@@ -9,7 +10,7 @@ var supasell_config = {
 	'captcha' : 'https://cms.supasell.com/captcha/',
 	'api' : 'https://cms.supasell.com/router/',
 	'apierror' : 'Şu anda sunucuya ulaşılamıyor. Lütfen daha sonra tekrar deneyiniz.',
-	'version' : chrome.runtime.getManifest().version,
-	'extensionid' : chrome.runtime.id,
-	'icons' : chrome.runtime.getManifest().icons,
+	'version' : platform.runtime.getManifest().version,
+	'extensionid' : platform.runtime.id,
+	'icons' : platform.runtime.getManifest().icons,
 };

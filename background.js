@@ -1,1 +1,2 @@
-chrome.action.onClicked.addListener(tab => { });
+var platform = chrome;
+platform.action.onClicked.addListener(tab => { });
